@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#11100e" />
+    <meta name="description" content="A quiet, cinematic clock for your desk." />
+    <title>Still Time</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-theme="nocturne">
+    <main class="clock-stage" aria-label="时钟待机画面">
+      <canvas id="artwork" aria-hidden="true"></canvas>
+      <div class="grain" aria-hidden="true"></div>
+      <div class="composition" aria-hidden="true">
+        <span class="orb orb-a"></span>
+        <span class="orb orb-b"></span>
+        <span class="rule rule-a"></span>
+        <span class="rule rule-b"></span>
+        <span class="index-mark">ST / 01</span>
+      </div>
+
+      <section class="time-layout" aria-live="off">
+        <header class="edition-line">
+          <span class="brand">STILL TIME</span>
+          <span class="place" id="timezone">ASIA / SHANGHAI</span>
+        </header>
+
+        <div class="time-block" id="driftTarget">
+          <div class="period" id="period">PM</div>
+          <div class="time-row">
+            <span class="digits" id="hours">12</span>
+            <span class="colon" aria-hidden="true">:</span>
+            <span class="digits" id="minutes">00</span>
+            <span class="seconds" id="seconds">00</span>
+          </div>
+          <div class="date-line" id="dateLine">
+            <span id="weekday">FRIDAY</span>
+            <span class="date-rule" aria-hidden="true"></span>
+            <span id="date">21 AUGUST 2026</span>
+          </div>
+        </div>
+
+        <footer class="status-line">
+          <span id="dayProgress">DAY 64%</span>
+          <span class="status-rule" aria-hidden="true"></span>
+          <span id="weekNumber">WEEK 34</span>
+        </footer>
+      </section>
+
+      <button class="corner-button settings-trigger" id="settingsTrigger" type="button" title="设置" aria-label="打开设置" aria-expanded="false">
+        <span aria-hidden="true">&bull;&bull;&bull;</span>
+      </button>
+      <button class="corner-button fullscreen-trigger" id="fullscreenTrigger" type="button" title="全屏" aria-label="进入全屏">
+        <span class="fullscreen-icon" aria-hidden="true"></span>
+      </button>
+
+      <aside class="settings-panel" id="settingsPanel" aria-hidden="true" aria-label="时钟设置">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">DISPLAY</p>
+            <h2>画面设置</h2>
+          </div>
+          <button class="icon-button close-button" id="closeSettings" type="button" title="关闭" aria-label="关闭设置">&times;</button>
+        </div>
+
+        <div class="setting-group">
+          <p class="setting-label">场景</p>
+          <div class="theme-options" role="radiogroup" aria-label="场景主题">
+            <button class="theme-option is-active" type="button" role="radio" aria-checked="true" data-theme-value="nocturne">
+              <span class="theme-swatch swatch-nocturne" aria-hidden="true"></span>
+              <span>Nocturne</span>
+            </button>
+            <button class="theme-option" type="button" role="radio" aria-checked="false" data-theme-value="poster">
+              <span class="theme-swatch swatch-poster" aria-hidden="true"></span>
+              <span>Poster 57</span>
+            </button>
+            <button class="theme-option" type="button" role="radio" aria-checked="false" data-theme-value="signal">
+              <span class="theme-swatch swatch-signal" aria-hidden="true"></span>
+              <span>Signal</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="setting-group split-settings">
+          <label class="switch-row" for="hourMode">
+            <span>24 小时制</span>
+            <input id="hourMode" type="checkbox" checked />
+            <span class="switch" aria-hidden="true"></span>
+          </label>
+          <label class="switch-row" for="showSeconds">
+            <span>显示秒钟</span>
+            <input id="showSeconds" type="checkbox" checked />
+            <span class="switch" aria-hidden="true"></span>
+          </label>
+          <label class="switch-row" for="showDate">
+            <span>显示日期</span>
+            <input id="showDate" type="checkbox" checked />
+            <span class="switch" aria-hidden="true"></span>
+          </label>
+          <label class="switch-row" for="antiBurn">
+            <span>防烧屏漂移</span>
+            <input id="antiBurn" type="checkbox" checked />
+            <span class="switch" aria-hidden="true"></span>
+          </label>
+          <label class="switch-row" for="hourChime">
+            <span>整点提示音</span>
+            <input id="hourChime" type="checkbox" />
+            <span class="switch" aria-hidden="true"></span>
+          </label>
+        </div>
+
+        <div class="setting-group brightness-group">
+          <label class="setting-label" for="brightness">亮度 <output id="brightnessValue">100%</output></label>
+          <input id="brightness" type="range" min="35" max="100" value="100" />
+        </div>
+
+        <button class="panel-fullscreen" id="panelFullscreen" type="button">
+          <span class="fullscreen-icon" aria-hidden="true"></span>
+          <span>进入全屏</span>
+        </button>
+      </aside>
+
+      <div class="panel-scrim" id="panelScrim" aria-hidden="true"></div>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
