@@ -87,6 +87,169 @@ button {
   z-index: -3;
 }
 
+.hud-overlay {
+  display: none;
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  pointer-events: none;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  text-transform: uppercase;
+}
+
+.hud-topline,
+.hud-bottomline {
+  position: absolute;
+  right: 2.25rem;
+  left: 2.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 18px;
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+.hud-topline {
+  top: 5.25rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--faint);
+}
+
+.hud-bottomline {
+  bottom: 5rem;
+}
+
+.hud-mode,
+.drive-mode {
+  color: var(--accent);
+}
+
+.hud-telemetry {
+  color: var(--muted);
+  letter-spacing: 0.09em;
+}
+
+.hud-gauge {
+  position: absolute;
+  top: 50%;
+  width: min(23vw, 315px);
+  aspect-ratio: 1;
+  border: 1px solid color-mix(in srgb, var(--accent-2), transparent 30%);
+  border-radius: 50%;
+  opacity: 0.54;
+  transform: translateY(-50%);
+}
+
+.hud-gauge::before {
+  content: "";
+  position: absolute;
+  inset: 7%;
+  border: 1px solid var(--faint);
+  border-radius: 50%;
+  background: repeating-conic-gradient(from -42deg, var(--accent-2) 0deg 1deg, transparent 1deg 10deg);
+  -webkit-mask: radial-gradient(circle, transparent 0 63%, #000 64% 68%, transparent 69%);
+  mask: radial-gradient(circle, transparent 0 63%, #000 64% 68%, transparent 69%);
+}
+
+.hud-gauge::after {
+  content: "";
+  position: absolute;
+  inset: 20%;
+  border: 1px solid color-mix(in srgb, var(--accent), transparent 50%);
+  border-radius: 50%;
+  box-shadow: 0 0 30px color-mix(in srgb, var(--accent), transparent 82%);
+}
+
+.hud-gauge-left {
+  left: -3.5vw;
+  transform: translateY(-50%) rotate(-18deg);
+}
+
+.hud-gauge-right {
+  right: -3.5vw;
+  transform: translateY(-50%) rotate(18deg);
+}
+
+.gauge-title,
+.gauge-readout,
+.gauge-unit {
+  position: absolute;
+  z-index: 1;
+  display: block;
+  transform: rotate(18deg);
+}
+
+.hud-gauge-left .gauge-title,
+.hud-gauge-left .gauge-readout,
+.hud-gauge-left .gauge-unit {
+  transform: rotate(18deg);
+}
+
+.hud-gauge-right .gauge-title,
+.hud-gauge-right .gauge-readout,
+.hud-gauge-right .gauge-unit {
+  transform: rotate(-18deg);
+}
+
+.gauge-title {
+  top: 25%;
+  left: 28%;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+}
+
+.gauge-readout {
+  top: 37%;
+  left: 28%;
+  font-family: "Arial Narrow", "Roboto Condensed", Impact, sans-serif;
+  font-size: clamp(38px, 5vw, 74px);
+  line-height: 0.8;
+  font-weight: 700;
+  letter-spacing: -0.05em;
+  color: var(--ink);
+}
+
+.gauge-unit {
+  top: 62%;
+  left: 30%;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  color: var(--accent);
+}
+
+.drive-mode {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.drive-mode i {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 12px var(--accent);
+  animation: cockpit-pulse 1.8s ease-in-out infinite;
+}
+
+.gear-readout {
+  position: absolute;
+  left: 50%;
+  font-family: "Arial Narrow", "Roboto Condensed", Impact, sans-serif;
+  font-size: 20px;
+  line-height: 1;
+  letter-spacing: 0;
+  color: var(--accent);
+  transform: translateX(-50%);
+}
+
 .orb,
 .rule,
 .index-mark {
@@ -251,6 +414,10 @@ button {
   font-weight: 700;
   letter-spacing: 0;
   text-transform: uppercase;
+}
+
+.time-layout {
+  z-index: 3;
 }
 
 .date-rule,
@@ -529,6 +696,80 @@ input:focus-visible + .switch {
   background: #ff4d32;
 }
 
+.theme-subtitle {
+  margin-top: 1.4rem;
+}
+
+.swatch-carbon {
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.06) 25%, transparent 25%) 0 0 / 8px 8px,
+    linear-gradient(315deg, rgba(255,255,255,0.06) 25%, transparent 25%) 0 0 / 8px 8px,
+    #080b0d;
+}
+
+.swatch-carbon::before {
+  width: 5px;
+  height: 78%;
+  left: 20%;
+  bottom: 10%;
+  background: #d5ff35;
+  box-shadow: 10px 0 #d5ff35, 20px 0 #d5ff35, 30px 0 rgba(213,255,53,0.35);
+  transform: skewX(-20deg);
+}
+
+.swatch-carbon::after {
+  width: 14px;
+  height: 14px;
+  right: 13%;
+  top: 16%;
+  border: 2px solid #d5ff35;
+  border-radius: 50%;
+}
+
+.swatch-gt {
+  background: #171415;
+}
+
+.swatch-gt::before {
+  width: 70%;
+  height: 150%;
+  right: -10%;
+  top: -24%;
+  background: #b41e26;
+  clip-path: polygon(37% 0, 100% 0, 63% 100%, 0 100%);
+}
+
+.swatch-gt::after {
+  width: 56%;
+  left: 11%;
+  bottom: 17%;
+  height: 2px;
+  background: #d5a86b;
+}
+
+.swatch-ev {
+  background: #071521;
+}
+
+.swatch-ev::before {
+  width: 76%;
+  height: 2px;
+  left: 12%;
+  top: 50%;
+  background: #68d8ff;
+  box-shadow: 0 0 10px #68d8ff;
+}
+
+.swatch-ev::after {
+  width: 9px;
+  height: 9px;
+  left: 21%;
+  top: calc(50% - 4px);
+  border-radius: 50%;
+  background: #b7ff31;
+  box-shadow: 0 0 9px #b7ff31;
+}
+
 .split-settings {
   display: grid;
 }
@@ -713,6 +954,159 @@ body[data-theme="signal"] .grain {
 
 body[data-theme="signal"] .corner-button {
   background: rgba(198, 255, 56, 0.78);
+}
+
+body[data-theme="carbon"],
+body[data-theme="gt"],
+body[data-theme="ev"] {
+  color-scheme: dark;
+  --panel: #101316;
+  --panel-ink: #eef4f5;
+  --panel-line: rgba(238, 244, 245, 0.16);
+}
+
+body[data-theme="carbon"] {
+  --bg: #080b0d;
+  --ink: #eef4f5;
+  --muted: rgba(238, 244, 245, 0.55);
+  --faint: rgba(238, 244, 245, 0.17);
+  --accent: #d5ff35;
+  --accent-2: #73808f;
+}
+
+body[data-theme="carbon"] .clock-stage {
+  background:
+    radial-gradient(circle at 50% 48%, rgba(57, 78, 87, 0.2), transparent 34%),
+    linear-gradient(115deg, rgba(255,255,255,0.035) 25%, transparent 25%) 0 0 / 14px 14px,
+    linear-gradient(295deg, rgba(255,255,255,0.035) 25%, transparent 25%) 0 0 / 14px 14px,
+    var(--bg);
+}
+
+body[data-theme="carbon"] .orb-a,
+body[data-theme="carbon"] .orb-b,
+body[data-theme="carbon"] .rule-a,
+body[data-theme="carbon"] .rule-b,
+body[data-theme="carbon"] .index-mark {
+  opacity: 0;
+}
+
+body[data-theme="carbon"] .hud-overlay,
+body[data-theme="gt"] .hud-overlay,
+body[data-theme="ev"] .hud-overlay {
+  display: block;
+}
+
+body[data-theme="carbon"] .hud-topline,
+body[data-theme="carbon"] .hud-bottomline {
+  border-color: rgba(213, 255, 53, 0.28);
+}
+
+body[data-theme="carbon"] .time-block {
+  text-shadow: 0 0 30px rgba(213, 255, 53, 0.08);
+}
+
+body[data-theme="carbon"] .colon {
+  text-shadow: 0 0 18px rgba(213, 255, 53, 0.55);
+}
+
+body[data-theme="gt"] {
+  --bg: #171415;
+  --ink: #f2e8da;
+  --muted: rgba(242, 232, 218, 0.56);
+  --faint: rgba(242, 232, 218, 0.17);
+  --accent: #ff3b30;
+  --accent-2: #d5a86b;
+}
+
+body[data-theme="gt"] .clock-stage {
+  background:
+    linear-gradient(116deg, transparent 0 52%, rgba(180, 30, 38, 0.48) 52% 53%, transparent 53%),
+    radial-gradient(circle at 84% 48%, rgba(217, 143, 68, 0.14), transparent 30%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.03), transparent 35%),
+    var(--bg);
+}
+
+body[data-theme="gt"] .orb-a {
+  width: min(40vw, 600px);
+  right: -12vw;
+  top: 9vh;
+  background: transparent;
+  border: 18px solid rgba(255, 59, 48, 0.33);
+  box-shadow: 0 0 0 1px rgba(213, 168, 107, 0.24), inset 0 0 26px rgba(255, 59, 48, 0.16);
+}
+
+body[data-theme="gt"] .orb-b {
+  width: min(15vw, 220px);
+  left: auto;
+  right: 25vw;
+  bottom: 13vh;
+  border: 1px solid var(--accent-2);
+}
+
+body[data-theme="gt"] .rule-a {
+  left: 67%;
+  background: rgba(213, 168, 107, 0.33);
+}
+
+body[data-theme="gt"] .time-block {
+  text-shadow: 0 0 26px rgba(255, 59, 48, 0.11);
+}
+
+body[data-theme="gt"] .colon {
+  text-shadow: 0 0 17px rgba(255, 59, 48, 0.5);
+}
+
+body[data-theme="ev"] {
+  --bg: #071521;
+  --ink: #e9f8ff;
+  --muted: rgba(233, 248, 255, 0.55);
+  --faint: rgba(233, 248, 255, 0.15);
+  --accent: #b7ff31;
+  --accent-2: #68d8ff;
+}
+
+body[data-theme="ev"] .clock-stage {
+  background:
+    radial-gradient(ellipse at 75% 47%, rgba(29, 129, 192, 0.22), transparent 33%),
+    linear-gradient(90deg, rgba(104, 216, 255, 0.05) 1px, transparent 1px) 0 0 / 44px 44px,
+    linear-gradient(rgba(104, 216, 255, 0.05) 1px, transparent 1px) 0 0 / 44px 44px,
+    var(--bg);
+}
+
+body[data-theme="ev"] .orb-a {
+  width: min(48vw, 720px);
+  right: -18vw;
+  top: 9vh;
+  background: transparent;
+  border: 1px solid rgba(104, 216, 255, 0.55);
+  box-shadow: 0 0 0 22px rgba(104, 216, 255, 0.03), 0 0 60px rgba(104, 216, 255, 0.12);
+}
+
+body[data-theme="ev"] .orb-b {
+  width: 11vw;
+  left: 13vw;
+  bottom: 19vh;
+  border: 0;
+  background: var(--accent);
+  box-shadow: 0 0 28px rgba(183, 255, 49, 0.4);
+}
+
+body[data-theme="ev"] .rule-a {
+  left: 41%;
+  background: rgba(104, 216, 255, 0.36);
+}
+
+body[data-theme="ev"] .time-block {
+  text-shadow: 0 0 24px rgba(104, 216, 255, 0.12);
+}
+
+body[data-theme="ev"] .colon {
+  text-shadow: 0 0 19px rgba(183, 255, 49, 0.48);
+}
+
+@keyframes cockpit-pulse {
+  0%, 100% { opacity: 0.45; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.2); }
 }
 
 body.hide-seconds .seconds,
