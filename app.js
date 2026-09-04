@@ -12,6 +12,7 @@ const elements = {
   dayProgress: document.querySelector("#dayProgress"),
   weekNumber: document.querySelector("#weekNumber"),
   timezone: document.querySelector("#timezone"),
+  hudMode: document.querySelector("#hudMode"),
   settingsPanel: document.querySelector("#settingsPanel"),
   settingsTrigger: document.querySelector("#settingsTrigger"),
   panelScrim: document.querySelector("#panelScrim"),
@@ -28,6 +29,9 @@ const themeColors = {
   nocturne: { line: "#9dc8c8", pulse: "#ff593d" },
   poster: { line: "#2254a3", pulse: "#e8492e" },
   signal: { line: "#3457dd", pulse: "#ff4d32" },
+  carbon: { line: "#73808f", pulse: "#d5ff35" },
+  gt: { line: "#cc9a5f", pulse: "#ff3b30" },
+  ev: { line: "#68d8ff", pulse: "#b7ff31" },
 };
 
 const defaultSettings = {
@@ -134,6 +138,13 @@ function playChime() {
 function setTheme(theme, persist = true) {
   settings.theme = theme;
   document.body.dataset.theme = theme;
+  if (elements.hudMode) {
+    elements.hudMode.textContent = {
+      carbon: "LAUNCH CONTROL",
+      gt: "CORSA / STRADA",
+      ev: "SILENT VELOCITY",
+    }[theme] || "LAUNCH CONTROL";
+  }
   document.querySelector('meta[name="theme-color"]').content = getComputedStyle(document.body).getPropertyValue("--bg").trim();
   document.querySelectorAll(".theme-option").forEach((button) => {
     const active = button.dataset.themeValue === theme;
@@ -219,6 +230,47 @@ function resizeCanvas() {
   context.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 
+function drawCockpitArtwork(width, height, colors) {
+  const isCarbon = settings.theme === "carbon";
+  const isGt = settings.theme === "gt";
+  const centerX = width * 0.78;
+  const centerY = height * 0.52;
+  const baseRadius = Math.min(width, height) * 0.42;
+
+  context.save();
+  context.lineCap = "round";
+  context.globalAlpha = 0.36;
+  context.lineWidth = 1;
+  for (let ring = 0; ring < 4; ring += 1) {
+    context.beginPath();
+    context.arc(centerX, centerY, baseRadius - ring * 23, Math.PI * 0.68, Math.PI * 1.46);
+    context.strokeStyle = ring === 0 ? colors.pulse : colors.line;
+    context.stroke();
+  }
+
+  context.globalAlpha = isCarbon ? 0.2 : 0.3;
+  for (let i = 0; i < 12; i += 1) {
+    const phase = artTime * 4 + i * 0.46;
+    const x = width * (0.05 + i * 0.07);
+    const length = height * (0.16 + (i % 4) * 0.04);
+    context.beginPath();
+    context.moveTo(x + Math.sin(phase) * 8, height * 0.92);
+    context.lineTo(x + length * 0.26 + Math.sin(phase) * 20, height * 0.92 - length);
+    context.strokeStyle = i % 3 === 0 ? colors.pulse : colors.line;
+    context.stroke();
+  }
+
+  context.globalAlpha = 0.2;
+  const glow = context.createRadialGradient(centerX, centerY, baseRadius * 0.14, centerX, centerY, baseRadius * 0.92);
+  glow.addColorStop(0, isGt ? "rgba(255, 61, 42, 0.12)" : "rgba(123, 198, 255, 0.12)");
+  glow.addColorStop(1, "rgba(0, 0, 0, 0)");
+  context.fillStyle = glow;
+  context.beginPath();
+  context.arc(centerX, centerY, baseRadius, 0, Math.PI * 2);
+  context.fill();
+  context.restore();
+}
+
 function drawArtwork(timestamp) {
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const width = canvas.clientWidth;
@@ -226,6 +278,13 @@ function drawArtwork(timestamp) {
   const colors = themeColors[settings.theme];
   artTime = reduced ? 0 : timestamp * 0.000035;
   context.clearRect(0, 0, width, height);
+
+  if (["carbon", "gt", "ev"].includes(settings.theme)) {
+    drawCockpitArtwork(width, height, colors);
+    animationFrame = requestAnimationFrame(drawArtwork);
+    return;
+  }
+
   context.save();
 
   const count = width < 700 ? 6 : 11;
