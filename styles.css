@@ -352,6 +352,330 @@ button {
   transition: transform 18s ease-in-out;
 }
 
+/* The editorial scenes keep their quiet digital readout. Cockpit scenes swap it
+   for the instrument itself so the hands carry the time information. */
+.analog-clock {
+  position: relative;
+  display: none;
+  width: min(68vh, 72vw, 760px);
+  aspect-ratio: 1;
+  margin: 0 auto;
+  isolation: isolate;
+  filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.32));
+}
+
+.track-halo,
+.track-halo::before,
+.track-halo::after {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.track-halo {
+  z-index: -1;
+  inset: -11%;
+  background: conic-gradient(from -72deg, transparent 0 14deg, color-mix(in srgb, var(--accent), transparent 18%) 17deg 22deg, transparent 25deg 54deg, color-mix(in srgb, var(--accent-2), transparent 28%) 57deg 61deg, transparent 64deg 154deg, color-mix(in srgb, var(--accent), transparent 25%) 158deg 164deg, transparent 167deg 282deg, color-mix(in srgb, var(--accent-2), transparent 35%) 286deg 291deg, transparent 294deg);
+  -webkit-mask: radial-gradient(circle, transparent 0 75%, #000 76% 79%, transparent 80%);
+  mask: radial-gradient(circle, transparent 0 75%, #000 76% 79%, transparent 80%);
+  opacity: 0.92;
+  animation: halo-spin 14s linear infinite;
+}
+
+.track-halo::before {
+  content: "";
+  inset: 7%;
+  background: conic-gradient(from 12deg, transparent 0 30deg, var(--accent) 31deg 32deg, transparent 33deg 177deg, var(--accent-2) 178deg 179deg, transparent 180deg);
+  -webkit-mask: radial-gradient(circle, transparent 0 80%, #000 81% 83%, transparent 84%);
+  mask: radial-gradient(circle, transparent 0 80%, #000 81% 83%, transparent 84%);
+  filter: blur(1px);
+  opacity: 0.65;
+}
+
+.track-halo::after {
+  content: "";
+  inset: 2%;
+  border: 1px solid color-mix(in srgb, var(--accent-2), transparent 35%);
+  box-shadow: 0 0 24px color-mix(in srgb, var(--accent), transparent 58%), inset 0 0 24px color-mix(in srgb, var(--accent-2), transparent 72%);
+  opacity: 0.7;
+}
+
+.tachometer {
+  position: absolute;
+  z-index: 1;
+  inset: 1%;
+  border: 1px solid color-mix(in srgb, var(--accent-2), transparent 35%);
+  border-radius: 50%;
+  color: var(--accent-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.tachometer::before,
+.tachometer::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.tachometer::before {
+  inset: 2.5%;
+  border: 1px solid color-mix(in srgb, var(--accent-2), transparent 60%);
+  -webkit-mask: conic-gradient(from -135deg, #000 0 270deg, transparent 270deg);
+  mask: conic-gradient(from -135deg, #000 0 270deg, transparent 270deg);
+}
+
+.tachometer::after {
+  inset: 6%;
+  border: 1px solid color-mix(in srgb, var(--accent), transparent 72%);
+  box-shadow: 0 0 22px color-mix(in srgb, var(--accent), transparent 82%);
+}
+
+#rpmTicks,
+#rpmNumbers,
+.dial-ticks,
+.dial-numbers {
+  position: absolute;
+  inset: 0;
+}
+
+.rpm-tick,
+.dial-tick {
+  position: absolute;
+  inset: 0;
+  display: block;
+  transform: rotate(var(--tick-angle));
+}
+
+.rpm-tick::after,
+.dial-tick::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  display: block;
+  width: 1px;
+  transform: translateX(-50%);
+  background: currentColor;
+}
+
+.rpm-tick::after {
+  top: 2.5%;
+  height: 3.4%;
+  opacity: 0.62;
+}
+
+.rpm-tick.is-major::after {
+  width: 2px;
+  height: 6.6%;
+  opacity: 0.95;
+}
+
+.rpm-tick.is-redline::after {
+  background: var(--accent);
+}
+
+.rpm-number {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-family: "Arial Narrow", "Roboto Condensed", Impact, sans-serif;
+  font-size: clamp(9px, 1vw, 13px);
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--muted);
+}
+
+.rpm-number.is-redline {
+  color: var(--accent);
+}
+
+.rpm-label {
+  position: absolute;
+  left: 50%;
+  bottom: 7.5%;
+  transform: translateX(-50%);
+  font-size: clamp(7px, 0.68vw, 10px);
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  white-space: nowrap;
+  opacity: 0.68;
+}
+
+.analog-face {
+  position: absolute;
+  z-index: 2;
+  inset: 11%;
+  overflow: hidden;
+  border: 12px solid #232b2d;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 44%, rgba(255, 255, 255, 0.1), transparent 25%),
+    radial-gradient(circle at 50% 50%, #1c2527 0 52%, #111719 72%, #0b0f10 100%);
+  box-shadow:
+    0 0 0 2px rgba(255, 255, 255, 0.18),
+    0 0 0 6px rgba(0, 0, 0, 0.62),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.16),
+    inset 0 0 32px rgba(0, 0, 0, 0.82),
+    0 0 44px color-mix(in srgb, var(--accent), transparent 80%);
+}
+
+.analog-face::before,
+.analog-face::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+
+.analog-face::before {
+  inset: 2%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+}
+
+.analog-face::after {
+  inset: 8% 16% 0;
+  border-top: 1px solid color-mix(in srgb, var(--accent), transparent 44%);
+  border-radius: 50%;
+  opacity: 0.55;
+}
+
+.dial-tick::after {
+  top: 3.5%;
+  height: 3.2%;
+  opacity: 0.45;
+}
+
+.dial-tick.is-major::after {
+  width: 2px;
+  height: 6.2%;
+  opacity: 0.9;
+}
+
+.dial-numbers {
+  z-index: 2;
+}
+
+.dial-number {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-family: "Arial Narrow", "Roboto Condensed", Impact, sans-serif;
+  font-size: clamp(15px, 1.9vw, 27px);
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  text-shadow: 0 1px 3px #000;
+}
+
+.dial-brand,
+.dial-series {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+
+.dial-brand {
+  top: 23%;
+  font-size: clamp(7px, 0.8vw, 11px);
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+}
+
+.dial-series {
+  top: 29%;
+  font-family: "Arial Narrow", "Roboto Condensed", Impact, sans-serif;
+  font-size: clamp(9px, 1vw, 14px);
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  color: var(--accent);
+}
+
+.dial-stripes {
+  position: absolute;
+  z-index: 1;
+  right: 12%;
+  bottom: 16%;
+  left: 12%;
+  height: 12%;
+  opacity: 0.38;
+  background: repeating-linear-gradient(135deg, transparent 0 7px, color-mix(in srgb, var(--accent-2), transparent 66%) 7px 8px);
+  -webkit-mask: linear-gradient(to bottom, transparent, #000 28%, #000 65%, transparent);
+  mask: linear-gradient(to bottom, transparent, #000 28%, #000 65%, transparent);
+}
+
+.clock-hand {
+  position: absolute;
+  z-index: 5;
+  bottom: 50%;
+  left: 50%;
+  display: block;
+  transform: translateX(-50%) rotate(var(--hand-angle));
+  transform-origin: 50% 100%;
+  border-radius: 999px;
+  will-change: transform;
+}
+
+.hand-hour {
+  width: 4.4%;
+  height: 27%;
+  background: linear-gradient(90deg, #b8c3c5, #fff 42%, #929d9f);
+  box-shadow: 0 1px 4px #000, 0 0 8px color-mix(in srgb, var(--ink), transparent 74%);
+}
+
+.hand-minute {
+  width: 3%;
+  height: 37%;
+  background: linear-gradient(90deg, #aab6b8, #fbffff 42%, #7d898b);
+  box-shadow: 0 1px 4px #000, 0 0 8px color-mix(in srgb, var(--ink), transparent 74%);
+}
+
+.hand-second {
+  z-index: 6;
+  width: 1.15%;
+  height: 42%;
+  background: var(--accent);
+  box-shadow: 0 0 9px color-mix(in srgb, var(--accent), transparent 18%);
+}
+
+.hand-second::after {
+  content: "";
+  position: absolute;
+  bottom: -14%;
+  left: 50%;
+  width: 170%;
+  height: 22%;
+  border-radius: 999px;
+  background: currentColor;
+  transform: translateX(-50%);
+}
+
+.dial-center {
+  position: absolute;
+  z-index: 8;
+  top: 50%;
+  left: 50%;
+  width: 8%;
+  aspect-ratio: 1;
+  border: 3px solid #131a1b;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.7), 0 0 12px color-mix(in srgb, var(--accent), transparent 32%);
+  transform: translate(-50%, -50%);
+}
+
+.dial-center span {
+  position: absolute;
+  inset: 35%;
+  border-radius: 50%;
+  background: #121718;
+}
+
 .period {
   min-height: 18px;
   margin: 0 0 0.8rem 0.25rem;
@@ -1104,6 +1428,439 @@ body[data-theme="ev"] .colon {
   text-shadow: 0 0 19px rgba(183, 255, 49, 0.48);
 }
 
+body.is-cockpit .hud-overlay,
+body.is-cockpit .time-row {
+  display: none;
+}
+
+body.is-cockpit .time-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-shadow: none;
+}
+
+body.is-cockpit .period {
+  position: absolute;
+  top: -1.1rem;
+  left: 50%;
+  margin: 0;
+  transform: translateX(-50%);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+}
+
+body.is-cockpit .analog-clock {
+  display: block;
+}
+
+body.is-cockpit .date-line {
+  grid-template-columns: max-content minmax(24px, 170px) max-content;
+  max-width: min(100%, 430px);
+}
+
+body.is-cockpit .date-line {
+  margin-top: 1.15rem;
+  color: var(--muted);
+}
+
+/* Each cockpit has its own instrument geometry. */
+body[data-theme="carbon"] .analog-clock {
+  width: min(100%, 1200px, calc((100dvh - 160px) * 2.65));
+  aspect-ratio: 2.65;
+  filter: drop-shadow(0 18px 22px #0008);
+}
+body[data-theme="ev"] .analog-clock {
+  width: min(100%, 1200px);
+  aspect-ratio: auto;
+  filter: none;
+}
+body[data-theme="carbon"] .track-halo,
+body[data-theme="carbon"] .tachometer,
+body[data-theme="carbon"] .analog-face,
+body[data-theme="ev"] .track-halo,
+body[data-theme="ev"] .tachometer,
+body[data-theme="ev"] .analog-face,
+body[data-theme="carbon"] .date-line,
+body[data-theme="ev"] .date-line,
+body[data-theme="carbon"] .period,
+body[data-theme="ev"] .period,
+body[data-theme="ev"] .composition {
+  display: none;
+}
+body[data-theme="carbon"] {
+  --bg: #101112;
+  --ink: #f0f1ef;
+  --accent: #ee583e;
+  --accent-2: #b2b8b7;
+}
+body[data-theme="carbon"] .clock-stage {
+  background:
+    repeating-linear-gradient(100deg, #ffffff02 0 1px, transparent 1px 4px),
+    linear-gradient(#1c1e20, #0b0c0d 70%);
+}
+body[data-theme="carbon"] #artwork { opacity: .18; }
+body[data-theme="ev"] {
+  --bg: #080e11;
+  --accent: #c6fb60;
+  --accent-2: #7bdfeb;
+}
+body[data-theme="ev"] .clock-stage {
+  background:
+    linear-gradient(90deg, #ffffff03 1px, transparent 1px) 0 0 / 64px 64px,
+    #080e11;
+}
+body[data-theme="ev"] #artwork { opacity: .28; }
+
+.barrel-cluster,
+.ev-dashboard { display: none; }
+body[data-theme="carbon"] .barrel-cluster {
+  display: grid;
+  height: 100%;
+  grid-template-columns: 1fr 1.22fr 1fr;
+  grid-template-rows: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+}
+.cluster-title,
+.cluster-caption {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+  color: #8f9495;
+  letter-spacing: 0;
+}
+.cluster-title { padding-bottom: 16px; }
+.cluster-title span:first-child { color: #f0f1ef; font-size: 18px; font-weight: 700; }
+.cluster-caption { padding-top: 16px; font-size: 9px; }
+.barrel {
+  container: dial / inline-size;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  border: 10px solid #272b2d;
+  border-top-color: #34393b;
+  border-bottom-color: #17191b;
+  border-radius: 50%;
+  color: #ecefed;
+  background: radial-gradient(circle at 50% 40%, #202223, #08090a 75%);
+  box-shadow:
+    0 0 0 1px #747b7d,
+    0 0 0 4px #08090b,
+    0 5px 0 6px #0008,
+    inset 0 0 0 1px #555a5c,
+    inset 0 8px 20px #000c;
+}
+.barrel-time {
+  z-index: 2;
+  margin-top: -22px;
+  border-color: #969d9e #414647 #191d1f;
+  background: radial-gradient(circle at 50% 35%, #303436, #111416 80%);
+}
+.barrel::after {
+  content: "";
+  position: absolute;
+  inset: 3%;
+  border: 1px solid #ffffff12;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.barrel-scale,
+.barrel-tick,
+.barrel-clock-hands,
+.barrel-pointer { position: absolute; inset: 0; }
+.barrel-tick { transform: rotate(var(--tick-angle)); }
+.barrel-tick::after {
+  content: "";
+  position: absolute;
+  top: 5%;
+  left: 50%;
+  height: 3%;
+  width: 1px;
+  background: #828a8b;
+}
+.barrel-tick.is-major::after { height: 6%; width: 2px; background: #e9ecea; }
+.barrel-scale > span {
+  position: absolute;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1;
+  transform: translate(-50%, -50%);
+  font-variant-numeric: tabular-nums;
+  color: #c7cccb;
+}
+.barrel-time .barrel-scale > span { font-size: 22px; color: #f4f4ef; }
+.barrel-pointer { transform: rotate(var(--needle-angle, -135deg)); }
+.barrel-pointer::after {
+  content: "";
+  position: absolute;
+  top: 5%;
+  left: calc(50% - 2px);
+  width: 4px;
+  height: 12%;
+  background: #f2593c;
+  box-shadow: 0 0 5px #f2593c66;
+}
+.barrel-label,
+.barrel-detail,
+.barrel > strong,
+.barrel-lcd {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  letter-spacing: 0;
+}
+.barrel-label {
+  top: 28%;
+  width: 62%;
+  color: #adb5b6;
+  font-size: 10px;
+  line-height: 1.2;
+}
+.barrel > strong {
+  top: 39%;
+  width: 70%;
+  color: #f6f7f2;
+  font-size: 54px;
+  font-weight: 400;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.barrel-detail {
+  top: 61%;
+  width: 60%;
+  line-height: 1.3;
+  font-size: 11px;
+  color: #c5cbca;
+  overflow-wrap: anywhere;
+}
+.barrel-lcd {
+  top: 75%;
+  width: 47%;
+  min-height: 25px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #5b635f;
+  border-radius: 2px;
+  background: #87958a;
+  color: #101b14;
+  font-size: 10px;
+  line-height: 1.2;
+  font-family: "Courier New", monospace;
+  font-weight: 700;
+}
+.weather-action { cursor: pointer; padding: 4px 0; }
+.weather-action:hover { background: #b1beb3; }
+.weather-action:disabled { cursor: progress; opacity: .65; }
+.barrel-time .barrel-label { top: 26%; color: #d1d5d2; font-size: 10px; }
+.barrel-time-lcd {
+  position: absolute;
+  top: 67%;
+  left: 50%;
+  width: 35%;
+  padding: 5px 3px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border: 1px solid #596360;
+  border-radius: 2px;
+  background: #aab8ad;
+  color: #132218;
+  transform: translateX(-50%);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+.barrel-time-lcd strong { font: 700 24px / 1 "Courier New", monospace; }
+.barrel-time-lcd span { font-size: 9px; }
+.barrel-hand {
+  position: absolute;
+  bottom: 50%;
+  left: 50%;
+  z-index: 3;
+  width: 2%;
+  height: 31%;
+  background: linear-gradient(90deg, #c0c7c8 50%, #fcfffb 50%);
+  transform: translateX(-50%) rotate(var(--hand-angle, 0deg));
+  transform-origin: 50% 100%;
+  box-shadow: 2px 3px 3px #0009;
+}
+.barrel-hour { height: 23%; width: 3%; }
+.barrel-second { height: 40%; width: 1%; background: #f45234; z-index: 4; }
+.barrel-second::after { content: ""; position: absolute; top: 99%; height: 22%; width: 100%; background: inherit; }
+.barrel-hub {
+  position: absolute;
+  z-index: 5;
+  left: 50%;
+  top: 50%;
+  width: 7%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #1b1d1e;
+  border: 2px solid #a7aeaf;
+  box-shadow: 1px 2px 3px #000;
+  transform: translate(-50%, -50%);
+}
+@container dial (max-width: 290px) {
+  .barrel > strong { font-size: 42px; }
+  .barrel-scale > span { font-size: 11px; }
+  .barrel-time .barrel-scale > span { font-size: 17px; }
+  .barrel-time-lcd strong { font-size: 19px; }
+}
+@container dial (max-width: 220px) {
+  .barrel > strong { font-size: 30px; }
+  .barrel-label, .barrel-time .barrel-label { font-size: 8px; }
+  .barrel-detail, .barrel-lcd { font-size: 9px; }
+  .barrel-scale > span { font-size: 9px; }
+  .barrel-time .barrel-scale > span { font-size: 14px; }
+  .barrel-lcd { min-height: 21px; }
+  .barrel-time-lcd strong { font-size: 16px; }
+}
+@container dial (max-width: 140px) {
+  .barrel > strong { font-size: 24px; }
+  .barrel-label { font-size: 7px; }
+  .barrel-scale > span { font-size: 7px; }
+  .barrel-detail, .barrel-lcd { font-size: 8px; }
+  .barrel-lcd { min-height: 19px; width: 55%; }
+}
+
+/* A segmented day-cycle rail echoes an EV power meter using actual clock data. */
+body[data-theme="ev"] .ev-dashboard {
+  container: ev / inline-size;
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 2.5fr) minmax(175px, 1fr);
+  gap: 26px 42px;
+  padding: 36px 40px 28px;
+  border-top: 1px solid #84c4cb66;
+  border-bottom: 1px solid #84c4cb55;
+  background: linear-gradient(110deg, #112126b3, #0c151ab3);
+  box-shadow: 0 -6px 0 #0006, 0 10px 25px #0004;
+}
+.ev-topline,
+.ev-footer,
+.ev-cycle { grid-column: 1 / -1; }
+.ev-topline, .ev-footer, .ev-cycle-label, .ev-cycle-scale {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  letter-spacing: 0;
+}
+.ev-topline { color: #eff8f7; font-size: 18px; font-weight: 650; }
+.ev-topline small { margin-left: 20px; color: #88a3ab; font-size: 10px; font-weight: 400; }
+#evStatus { font-size: 10px; color: #c6fb60; }
+#evStatus::before { content: ""; display: inline-block; width: 5px; height: 5px; margin-right: 7px; border-radius: 50%; background: currentColor; }
+.ev-cycle-label { font-size: 10px; color: #92b0b6; }
+.ev-cycle-track {
+  height: 17px;
+  margin: 9px 0;
+  background: #3c56614d;
+  transform: skewX(-18deg);
+  overflow: hidden;
+  -webkit-mask: repeating-linear-gradient(90deg, #000 0 12px, transparent 12px 16px);
+  mask: repeating-linear-gradient(90deg, #000 0 12px, transparent 12px 16px);
+}
+.ev-cycle-track b { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #64d6ed, #c6fb60); }
+.ev-cycle-scale { font-size: 9px; color: #789096; }
+.ev-time-wrap { min-width: 0; align-self: center; padding: 18px 0; }
+.ev-time-label { display: flex; gap: 14px; color: #91a9af; font-size: 11px; }
+#evPeriod { color: #c6fb60; }
+.ev-time-row { display: flex; align-items: baseline; gap: 20px; margin-top: 18px; white-space: nowrap; }
+.ev-time { color: #f0fcfc; font: 300 128px / .92 "Helvetica Neue", Helvetica, Arial, sans-serif; letter-spacing: 0; font-variant-numeric: tabular-nums; }
+.ev-second-group { display: flex; flex-direction: column; gap: 8px; min-width: 48px; }
+.ev-seconds { color: #c6fb60; font: 300 40px / 1 "Helvetica Neue", Helvetica, Arial, sans-serif; font-variant-numeric: tabular-nums; }
+.ev-second-group small { color: #89a2a7; font-size: 9px; }
+.ev-metrics { display: grid; gap: 16px; align-content: center; border-left: 1px solid #7caaad33; padding-left: 26px; }
+.ev-metric { display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; align-items: end; font-variant-numeric: tabular-nums; }
+.ev-metric > span { grid-column: 1 / -1; color: #839fa7; font-size: 9px; }
+.ev-metric strong { font-size: 26px; line-height: 1; color: #e5f3f3; font-weight: 400; }
+.ev-metric small { color: #74969f; font-size: 8px; padding-bottom: 2px; }
+.ev-footer { padding-top: 18px; border-top: 1px solid #7caaad33; color: #94aeb4; font-size: 10px; text-transform: uppercase; }
+@container ev (max-width: 960px) {
+  .ev-time { font-size: 100px; }
+  .ev-seconds { font-size: 32px; }
+}
+@container ev (max-width: 800px) {
+  .ev-time { font-size: 80px; }
+  .ev-time-row { gap: 12px; }
+  .ev-topline small { display: none; }
+  .ev-metric strong { font-size: 22px; }
+}
+.weather-settings { display: none; }
+body[data-theme="carbon"] .weather-settings { display: block; }
+.location-button, .city-search button, .city-results button {
+  border: 1px solid var(--panel-line);
+  background: #ffffff08;
+  color: var(--panel-ink);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  min-height: 36px;
+  padding: 8px 12px;
+}
+.location-button { width: 100%; margin: 6px 0 10px; }
+.city-search { display: flex; gap: 8px; }
+.city-search input { min-width: 0; width: 100%; border: 1px solid var(--panel-line); border-radius: 4px; background: #0003; color: var(--panel-ink); padding: 8px; font-size: 12px; }
+.city-search button { flex-shrink: 0; }
+.weather-status { margin: 10px 0 0; color: #a7b3b5; font-size: 11px; line-height: 1.6; }
+.city-results { display: grid; gap: 6px; margin-top: 8px; }
+.city-results button { text-align: left; line-height: 1.5; }
+.location-button:hover, .city-search button:hover, .city-results button:hover { background: #ffffff18; }
+.location-button:disabled { cursor: progress; opacity: .5; }
+.weather-action:focus-visible, .location-button:focus-visible, .city-search :focus-visible, .city-results button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+body.hide-seconds .ev-second-group { visibility: hidden; }
+body.hide-seconds .barrel-second { display: none; }
+body.hide-date .barrel-date { visibility: hidden; }
+body.hide-date #evDate, body.hide-date .ev-calendar { visibility: hidden; }
+.swatch-carbon { background: #131617; }
+.swatch-carbon::before { width: 28%; height: auto; aspect-ratio: 1; border: 3px solid #9da2a2; background: #22292b; box-shadow: -24px 4px 0 -4px #22292b, -24px 4px 0 -1px #697072, 24px 4px 0 -4px #22292b, 24px 4px 0 -1px #697072; top: 24%; bottom: auto; left: 36%; transform: none; border-radius: 50%; }
+.swatch-carbon::after { width: 2px; height: 15px; top: 30%; right: 48%; border: 0; background: #f45839; transform: rotate(28deg); }
+.swatch-ev::before { top: 24%; height: 5px; width: 76%; background: repeating-linear-gradient(90deg, #7bdfeb 0 5px, transparent 5px 7px); box-shadow: none; }
+.swatch-ev::after { top: 44%; left: 12%; width: 42%; height: 28%; border-radius: 0; background: #c8edf4; box-shadow: 35px 0 0 -5px #8ba8ad; }
+.theme-option > span:last-child { white-space: normal; min-height: 38px; line-height: 1.35; }
+
+body[data-theme="carbon"] .analog-face {
+  border-color: #263034;
+}
+
+body[data-theme="gt"] .analog-face {
+  border-color: #382427;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(255, 226, 186, 0.12), transparent 24%),
+    radial-gradient(circle at 50% 50%, #332425 0 52%, #1d1516 74%, #120e0f 100%);
+  box-shadow:
+    0 0 0 2px rgba(255, 225, 190, 0.2),
+    0 0 0 6px rgba(0, 0, 0, 0.66),
+    inset 0 0 0 1px rgba(255, 223, 180, 0.18),
+    inset 0 0 32px rgba(0, 0, 0, 0.84),
+    0 0 44px rgba(255, 59, 48, 0.16);
+}
+
+body[data-theme="gt"] .hand-hour,
+body[data-theme="gt"] .hand-minute {
+  background: linear-gradient(90deg, #b79c81, #fff1d8 42%, #806550);
+}
+
+body[data-theme="ev"] .analog-face {
+  border-color: #1a3746;
+  background:
+    radial-gradient(circle at 50% 40%, rgba(178, 239, 255, 0.13), transparent 25%),
+    radial-gradient(circle at 50% 50%, #112d3c 0 52%, #0a1e2a 74%, #06131d 100%);
+}
+
+body[data-theme="ev"] .hand-hour,
+body[data-theme="ev"] .hand-minute {
+  background: linear-gradient(90deg, #9ab7c0, #e9fbff 42%, #66838c);
+}
+
+@keyframes halo-spin {
+  to { transform: rotate(360deg); }
+}
+
 @keyframes cockpit-pulse {
   0%, 100% { opacity: 0.45; transform: scale(0.9); }
   50% { opacity: 1; transform: scale(1.2); }
@@ -1111,6 +1868,10 @@ body[data-theme="ev"] .colon {
 
 body.hide-seconds .seconds,
 body.hide-date .date-line {
+  display: none;
+}
+
+body.hide-seconds .hand-second {
   display: none;
 }
 
@@ -1259,6 +2020,22 @@ body.mode-24 .period {
   .settings-panel {
     padding: 1.5rem 1.2rem 1.2rem;
   }
+
+  body.is-cockpit .analog-clock {
+    width: min(78vw, 58vh, 460px);
+  }
+
+  body[data-theme="carbon"] .analog-clock {
+    width: min(96vw, 520px);
+  }
+
+  body[data-theme="ev"] .analog-clock {
+    width: min(94vw, 520px);
+  }
+
+  body.is-cockpit .date-line {
+    margin-top: 0.8rem;
+  }
 }
 
 @media (max-width: 390px) {
@@ -1283,6 +2060,71 @@ body.mode-24 .period {
     min-width: 30px;
     font-size: 19px;
   }
+
+  body.is-cockpit .analog-clock {
+    width: min(84vw, 52vh, 360px);
+  }
+}
+
+@media (max-width: 1000px) {
+  body[data-theme="ev"] .ev-dashboard { padding: 24px; gap: 22px; grid-template-columns: minmax(0, 2.5fr) minmax(140px, 1fr); }
+  .ev-metrics { padding-left: 18px; }
+}
+
+@media (max-width: 700px) and (min-height: 501px) {
+  body[data-theme="ev"] .ev-dashboard { grid-template-columns: minmax(0, 1fr); padding: 24px 18px; gap: 26px; }
+  .ev-time { font-size: 72px; }
+  .ev-time-wrap { padding: 8px 0; }
+  .ev-time-row { justify-content: center; gap: 12px; }
+  .ev-seconds { font-size: 26px; }
+  .ev-second-group { min-width: 34px; }
+  .ev-topline { font-size: 16px; }
+  .ev-topline small { display: none; }
+  .ev-metrics { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; border-left: 0; padding: 0; }
+  .ev-metric { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+  .ev-metric strong { font-size: 22px; }
+  .ev-footer { flex-wrap: wrap; gap: 10px; font-size: 9px; }
+}
+
+@media (max-width: 600px) and (min-height: 501px) {
+  body[data-theme="carbon"] .analog-clock { width: min(100%, 360px, calc((100dvh - 170px) * .82)); aspect-ratio: auto; }
+  body[data-theme="carbon"] .barrel-cluster { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: auto auto auto auto; gap: 16px 12px; }
+  .cluster-title { grid-row: 1; padding: 0; font-size: 8px; }
+  .cluster-title span:first-child { font-size: 14px; }
+  .barrel-time { grid-column: 1 / -1; grid-row: 2; width: 72%; justify-self: center; margin-top: 0; }
+  .barrel-date { grid-column: 1; grid-row: 3; }
+  .barrel-temp { grid-column: 2; grid-row: 3; }
+  .barrel { border-width: 7px; }
+  .cluster-caption { grid-row: 4; padding-top: 4px; font-size: 7px; }
+  body[data-theme="ev"] .analog-clock { width: 100%; }
+}
+
+@media (max-width: 375px) and (min-height: 501px) {
+  .ev-time { font-size: 58px; }
+  .ev-seconds { font-size: 22px; }
+  .ev-topline { font-size: 14px; }
+  body[data-theme="ev"] .ev-dashboard { padding: 20px 14px; gap: 22px; }
+}
+
+@media (max-height: 500px) and (min-width: 601px) {
+  body[data-theme="carbon"] .analog-clock { width: min(100%, calc((100dvh - 150px) * 2.65)); }
+  .cluster-title, .cluster-caption { padding: 0; }
+  .cluster-title span:first-child { font-size: 12px; }
+  .cluster-title, .cluster-caption { font-size: 8px; }
+  .barrel-time { margin-top: 0; }
+  .barrel { border-width: 6px; }
+  body[data-theme="ev"] .ev-dashboard { padding: 16px 24px; gap: 12px 28px; }
+  .ev-topline { font-size: 14px; }
+  .ev-cycle-track { height: 10px; margin: 5px 0; }
+  .ev-time-wrap { padding: 0; }
+  .ev-time-row { margin-top: 8px; }
+  .ev-time { font-size: 72px; }
+  .ev-seconds { font-size: 24px; }
+  .ev-metrics { gap: 8px; }
+  .ev-metric { grid-template-columns: 1fr auto auto; }
+  .ev-metric > span { grid-column: auto; }
+  .ev-metric strong { font-size: 20px; }
+  .ev-footer { padding-top: 8px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

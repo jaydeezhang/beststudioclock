@@ -25,16 +25,6 @@
           <span class="hud-mode" id="hudMode">LAUNCH CONTROL</span>
           <span class="hud-telemetry">TC / 01&nbsp;&nbsp;&nbsp; ABS / 02</span>
         </div>
-        <div class="hud-gauge hud-gauge-left">
-          <span class="gauge-title">RPM × 1000</span>
-          <span class="gauge-readout">6.4</span>
-          <span class="gauge-unit">x1000</span>
-        </div>
-        <div class="hud-gauge hud-gauge-right">
-          <span class="gauge-title">POWER</span>
-          <span class="gauge-readout">084</span>
-          <span class="gauge-unit">%</span>
-        </div>
         <div class="hud-bottomline">
           <span class="drive-mode">SPORT <i></i></span>
           <span class="gear-readout">N</span>
@@ -50,6 +40,77 @@
 
         <div class="time-block" id="driftTarget">
           <div class="period" id="period">PM</div>
+          <div class="analog-clock" id="analogClock" role="group" aria-label="超跑仪表盘">
+            <div class="track-halo" aria-hidden="true"></div>
+            <div class="tachometer" aria-hidden="true">
+              <div id="rpmTicks"></div>
+              <div id="rpmNumbers"></div>
+              <span class="rpm-label">RPM × 1000</span>
+            </div>
+            <div class="analog-face" aria-hidden="true">
+              <div class="dial-ticks" id="dialTicks"></div>
+              <span class="dial-brand">STILL TIME</span>
+              <span class="dial-series" id="dialSeries">V12 / 01</span>
+              <div class="dial-numbers" id="dialNumbers"></div>
+              <div class="dial-stripes"></div>
+              <div class="clock-hand hand-hour" id="hourHand"></div>
+              <div class="clock-hand hand-minute" id="minuteHand"></div>
+              <div class="clock-hand hand-second" id="secondHand"></div>
+              <div class="dial-center" aria-hidden="true"><span></span></div>
+            </div>
+            <div class="barrel-cluster">
+              <div class="cluster-title"><span>GT / TRIPLE</span><span>SPORT CHRONO</span></div>
+              <div class="barrel barrel-date" aria-label="日期仪表">
+                <div class="barrel-scale" id="calendarScale" aria-hidden="true"></div>
+                <i class="barrel-pointer" id="calendarPointer" aria-hidden="true"></i>
+                <span class="barrel-label">CALENDAR</span>
+                <strong id="barrelDate">05</strong>
+                <span class="barrel-detail" id="barrelMonth">SEP 2026</span>
+                <span class="barrel-lcd" id="barrelWeekday">SATURDAY</span>
+              </div>
+              <div class="barrel barrel-time" id="barrelClock" role="img" aria-label="当前时间">
+                <div class="barrel-scale" id="clockScale" aria-hidden="true"></div>
+                <span class="barrel-label">SPORT CHRONO</span>
+                <div class="barrel-clock-hands" aria-hidden="true">
+                  <i class="barrel-hand barrel-hour" id="barrelHourHand"></i>
+                  <i class="barrel-hand barrel-minute" id="barrelMinuteHand"></i>
+                  <i class="barrel-hand barrel-second" id="barrelSecondHand"></i>
+                  <i class="barrel-hub"></i>
+                </div>
+                <div class="barrel-time-lcd"><strong id="barrelTime">12:00</strong><span id="barrelPeriod">24H</span></div>
+              </div>
+              <div class="barrel barrel-temp" aria-label="当前位置温度">
+                <div class="barrel-scale" id="temperatureScale" aria-hidden="true"></div>
+                <i class="barrel-pointer" id="temperaturePointer" hidden aria-hidden="true"></i>
+                <span class="barrel-label">OUTSIDE / °C</span>
+                <strong id="barrelTemp">--°C</strong>
+                <span class="barrel-detail" id="barrelLocation">未设置位置</span>
+                <button class="barrel-lcd weather-action" id="weatherAction" type="button" title="获取当前位置的温度">获取定位</button>
+              </div>
+              <div class="cluster-caption"><span>STILL TIME</span><span>PRECISION INSTRUMENTS</span></div>
+            </div>
+            <div class="ev-dashboard">
+              <div class="ev-topline">
+                <span>ELECTRIC APEX <small>E-DRIVE / 01</small></span>
+                <span id="evStatus">LIVE</span>
+              </div>
+              <div class="ev-cycle">
+                <div class="ev-cycle-label"><span>DAY CYCLE</span><span id="evDayProgress">00%</span></div>
+                <div class="ev-cycle-track"><b id="evDayBar"></b></div>
+                <div class="ev-cycle-scale" aria-hidden="true"><span>00</span><span>06</span><span>12</span><span>18</span><span>24 H</span></div>
+              </div>
+              <div class="ev-time-wrap">
+                <span class="ev-time-label">LOCAL TIME <span id="evPeriod">24H</span></span>
+                <div class="ev-time-row"><strong class="ev-time" id="evTime">12:00</strong><span class="ev-second-group"><span class="ev-seconds" id="evSeconds">00</span><small>SEC</small></span></div>
+              </div>
+              <div class="ev-metrics">
+                <div class="ev-metric"><span>DAY LEFT</span><strong id="evDayLeft">12:00</strong><small>H / MIN</small></div>
+                <div class="ev-metric ev-calendar"><span>WEEK</span><strong id="evWeek">36</strong><small>ISO</small></div>
+                <div class="ev-metric ev-calendar"><span>YEAR</span><strong id="evYear">2026</strong><small>AD</small></div>
+              </div>
+              <div class="ev-footer"><span id="evDate">05 SEP 2026</span><span id="evTimezone">ASIA / SHANGHAI</span></div>
+            </div>
+          </div>
           <div class="time-row">
             <span class="digits" id="hours">12</span>
             <span class="colon" aria-hidden="true">:</span>
@@ -106,7 +167,7 @@
           <div class="theme-options" role="radiogroup" aria-label="超跑仪表盘主题">
             <button class="theme-option" type="button" role="radio" aria-checked="false" data-theme-value="carbon">
               <span class="theme-swatch swatch-carbon" aria-hidden="true"></span>
-              <span>V12 Carbon</span>
+              <span>GT 三联表</span>
             </button>
             <button class="theme-option" type="button" role="radio" aria-checked="false" data-theme-value="gt">
               <span class="theme-swatch swatch-gt" aria-hidden="true"></span>
@@ -147,6 +208,17 @@
           </label>
         </div>
 
+        <div class="setting-group weather-settings">
+          <p class="setting-label">三联表 / 当地温度</p>
+          <button class="location-button" id="locateWeather" type="button">使用当前位置</button>
+          <form id="citySearch" class="city-search">
+            <input id="weatherCity" type="search" aria-label="天气城市" placeholder="搜索城市" autocomplete="off" maxlength="80" required />
+            <button type="submit">搜索</button>
+          </form>
+          <p class="weather-status" id="weatherStatus" role="status">未设置位置</p>
+          <div id="cityResults" class="city-results" aria-label="城市搜索结果"></div>
+        </div>
+
         <div class="setting-group brightness-group">
           <label class="setting-label" for="brightness">亮度 <output id="brightnessValue">100%</output></label>
           <input id="brightness" type="range" min="35" max="100" value="100" />
@@ -161,6 +233,7 @@
       <div class="panel-scrim" id="panelScrim" aria-hidden="true"></div>
     </main>
 
+    <script src="weather.js"></script>
     <script src="app.js"></script>
   </body>
 </html>

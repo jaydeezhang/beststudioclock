@@ -13,6 +13,36 @@ const elements = {
   weekNumber: document.querySelector("#weekNumber"),
   timezone: document.querySelector("#timezone"),
   hudMode: document.querySelector("#hudMode"),
+  analogClock: document.querySelector("#analogClock"),
+  hourHand: document.querySelector("#hourHand"),
+  minuteHand: document.querySelector("#minuteHand"),
+  secondHand: document.querySelector("#secondHand"),
+  dialNumbers: document.querySelector("#dialNumbers"),
+  dialTicks: document.querySelector("#dialTicks"),
+  rpmNumbers: document.querySelector("#rpmNumbers"),
+  rpmTicks: document.querySelector("#rpmTicks"),
+  dialSeries: document.querySelector("#dialSeries"),
+  barrelDate: document.querySelector("#barrelDate"),
+  barrelWeekday: document.querySelector("#barrelWeekday"),
+  barrelMonth: document.querySelector("#barrelMonth"),
+  barrelTime: document.querySelector("#barrelTime"),
+  barrelPeriod: document.querySelector("#barrelPeriod"),
+  barrelClock: document.querySelector("#barrelClock"),
+  barrelHourHand: document.querySelector("#barrelHourHand"),
+  barrelMinuteHand: document.querySelector("#barrelMinuteHand"),
+  barrelSecondHand: document.querySelector("#barrelSecondHand"),
+  calendarPointer: document.querySelector("#calendarPointer"),
+  evTime: document.querySelector("#evTime"),
+  evSeconds: document.querySelector("#evSeconds"),
+  evDate: document.querySelector("#evDate"),
+  evTimezone: document.querySelector("#evTimezone"),
+  evStatus: document.querySelector("#evStatus"),
+  evPeriod: document.querySelector("#evPeriod"),
+  evDayLeft: document.querySelector("#evDayLeft"),
+  evWeek: document.querySelector("#evWeek"),
+  evYear: document.querySelector("#evYear"),
+  evDayProgress: document.querySelector("#evDayProgress"),
+  evDayBar: document.querySelector("#evDayBar"),
   settingsPanel: document.querySelector("#settingsPanel"),
   settingsTrigger: document.querySelector("#settingsTrigger"),
   panelScrim: document.querySelector("#panelScrim"),
@@ -44,6 +74,8 @@ const defaultSettings = {
   brightness: 100,
 };
 
+const cockpitThemes = ["carbon", "gt", "ev"];
+const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 let settings = loadSettings();
 let wakeTimer;
 let animationFrame;
@@ -51,12 +83,70 @@ let lastChimedHour = -1;
 let lastSecond = -1;
 let artTime = 0;
 
+function buildDialNumbers() {
+  if (!elements.dialNumbers) return;
+  const labels = ["12", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"];
+  labels.forEach((label, index) => {
+    const number = document.createElement("span");
+    number.className = "dial-number";
+    number.textContent = label;
+    const angle = index * Math.PI / 6;
+    number.style.left = `${50 + Math.sin(angle) * 36}%`;
+    number.style.top = `${50 - Math.cos(angle) * 36}%`;
+    elements.dialNumbers.append(number);
+  });
+
+  for (let index = 0; index < 60; index += 1) {
+    const tick = document.createElement("span");
+    tick.className = `dial-tick${index % 5 === 0 ? " is-major" : ""}`;
+    tick.style.setProperty("--tick-angle", `${index * 6}deg`);
+    elements.dialTicks.append(tick);
+  }
+
+  for (let index = 0; index <= 40; index += 1) {
+    const angle = -135 + index * 6.75;
+    const redline = index >= 35 ? " is-redline" : "";
+    const tick = document.createElement("span");
+    tick.className = `rpm-tick${index % 5 === 0 ? " is-major" : ""}${redline}`;
+    tick.style.setProperty("--tick-angle", `${angle}deg`);
+    elements.rpmTicks.append(tick);
+    if (index % 5 === 0) {
+      const number = document.createElement("span");
+      number.className = `rpm-number${redline}`;
+      number.textContent = index / 5;
+      number.style.left = `${50 + Math.sin(angle * Math.PI / 180) * 41.5}%`;
+      number.style.top = `${50 - Math.cos(angle * Math.PI / 180) * 41.5}%`;
+      elements.rpmNumbers.append(number);
+    }
+  }
+}
+
 function loadSettings() {
   try {
     return { ...defaultSettings, ...JSON.parse(localStorage.getItem("still-time-settings") || "{}") };
   } catch {
     return { ...defaultSettings };
   }
+}
+
+function buildBarrelScale(id, labels, minimum, maximum, tickCount, fullCircle = false) {
+  const scale = document.getElementById(id);
+  const start = fullCircle ? 0 : -135;
+  const sweep = fullCircle ? 360 : 270;
+  for (let index = 0; index < tickCount; index += 1) {
+    const tick = document.createElement("i");
+    tick.className = `barrel-tick${index % 5 === 0 ? " is-major" : ""}`;
+    tick.style.setProperty("--tick-angle", `${start + index / (fullCircle ? tickCount : tickCount - 1) * sweep}deg`);
+    scale.append(tick);
+  }
+  labels.forEach((label) => {
+    const angle = (start + (label - minimum) / (maximum - minimum) * sweep) * Math.PI / 180;
+    const number = document.createElement("span");
+    number.textContent = fullCircle && label === 0 ? "12" : label;
+    number.style.left = `${50 + Math.sin(angle) * 36}%`;
+    number.style.top = `${50 - Math.cos(angle) * 36}%`;
+    scale.append(number);
+  });
 }
 
 function saveSettings() {
@@ -79,10 +169,52 @@ function getWeekNumber(date) {
   return Math.ceil(((utc - yearStart) / 86400000 + 1) / 7);
 }
 
-function updateClock() {
-  const now = new Date();
-  if (now.getSeconds() === lastSecond) return;
-  lastSecond = now.getSeconds();
+function updateCockpitDisplays(now) {
+  const displayHour = settings.hour24 ? now.getHours() : now.getHours() % 12 || 12;
+  const hours = pad(displayHour);
+  const time = `${hours}:${pad(now.getMinutes())}`;
+  const month = new Intl.DateTimeFormat("en-US", { month: "short" }).format(now).toUpperCase();
+  const weekday = new Intl.DateTimeFormat("en-US", { weekday: "short" }).format(now).toUpperCase();
+  const date = `${pad(now.getDate())} ${month}`;
+  const fullDate = `${date} ${now.getFullYear()}`;
+
+  elements.barrelDate.textContent = pad(now.getDate());
+  elements.barrelMonth.textContent = `${month} ${now.getFullYear()}`;
+  elements.barrelWeekday.textContent = weekday;
+  elements.barrelTime.textContent = time;
+  elements.barrelPeriod.textContent = settings.hour24 ? "24H" : elements.period.textContent;
+  elements.calendarPointer.style.setProperty("--needle-angle", `${-135 + (now.getDate() - 1) / 30 * 270}deg`);
+  elements.evTime.textContent = time;
+  elements.evSeconds.textContent = pad(now.getSeconds());
+  elements.evDate.textContent = fullDate;
+  elements.evTimezone.textContent = elements.timezone.textContent;
+  elements.evPeriod.textContent = settings.hour24 ? "24H" : elements.period.textContent;
+  const elapsed = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+  const minutesLeft = Math.ceil((86400 - elapsed) / 60);
+  elements.evDayLeft.textContent = `${pad(Math.floor(minutesLeft / 60))}:${pad(minutesLeft % 60)}`;
+  elements.evWeek.textContent = pad(getWeekNumber(now));
+  elements.evYear.textContent = now.getFullYear();
+  elements.evDayProgress.textContent = `${Math.floor(elapsed / 864)}%`;
+  elements.evDayBar.style.width = `${elapsed / 864}%`;
+}
+
+function updateClockHands(now) {
+  const seconds = now.getSeconds() + (reducedMotion.matches ? 0 : now.getMilliseconds() / 1000);
+  const minutes = now.getMinutes() + seconds / 60;
+  const hours = now.getHours() % 12 + minutes / 60;
+  elements.hourHand.style.setProperty("--hand-angle", `${hours * 30}deg`);
+  elements.minuteHand.style.setProperty("--hand-angle", `${minutes * 6}deg`);
+  elements.secondHand.style.setProperty("--hand-angle", `${seconds * 6}deg`);
+  elements.barrelHourHand.style.setProperty("--hand-angle", `${hours * 30}deg`);
+  elements.barrelMinuteHand.style.setProperty("--hand-angle", `${minutes * 6}deg`);
+  elements.barrelSecondHand.style.setProperty("--hand-angle", `${seconds * 6}deg`);
+}
+
+function updateClock(now = new Date()) {
+  if (cockpitThemes.includes(settings.theme)) updateClockHands(now);
+  const epochSecond = Math.floor(now.getTime() / 1000);
+  if (epochSecond === lastSecond) return;
+  lastSecond = epochSecond;
 
   let hour = now.getHours();
   elements.period.textContent = hour < 12 ? "AM" : "PM";
@@ -91,6 +223,11 @@ function updateClock() {
   elements.hours.textContent = pad(hour);
   elements.minutes.textContent = pad(now.getMinutes());
   elements.seconds.textContent = pad(now.getSeconds());
+  updateCockpitDisplays(now);
+
+  const spokenTime = `${pad(hour)}:${pad(now.getMinutes())}${settings.seconds ? `:${pad(now.getSeconds())}` : ""}`;
+  elements.analogClock.setAttribute("aria-label", `当前时间 ${spokenTime}${settings.hour24 ? "" : ` ${elements.period.textContent}`}`);
+  elements.barrelClock.setAttribute("aria-label", elements.analogClock.getAttribute("aria-label"));
 
   const weekday = new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(now);
   const date = new Intl.DateTimeFormat("en-GB", {
@@ -138,6 +275,7 @@ function playChime() {
 function setTheme(theme, persist = true) {
   settings.theme = theme;
   document.body.dataset.theme = theme;
+  document.body.classList.toggle("is-cockpit", cockpitThemes.includes(theme));
   if (elements.hudMode) {
     elements.hudMode.textContent = {
       carbon: "LAUNCH CONTROL",
@@ -145,12 +283,21 @@ function setTheme(theme, persist = true) {
       ev: "SILENT VELOCITY",
     }[theme] || "LAUNCH CONTROL";
   }
+  if (elements.dialSeries) {
+    elements.dialSeries.textContent = {
+      carbon: "V12 / 01",
+      gt: "V8 / GT",
+      ev: "E-DRIVE / 01",
+    }[theme] || "V12 / 01";
+  }
   document.querySelector('meta[name="theme-color"]').content = getComputedStyle(document.body).getPropertyValue("--bg").trim();
   document.querySelectorAll(".theme-option").forEach((button) => {
     const active = button.dataset.themeValue === theme;
     button.classList.toggle("is-active", active);
     button.setAttribute("aria-checked", String(active));
   });
+  updateClock();
+  if (theme === "carbon") localWeather.refresh();
   if (persist) saveSettings();
 }
 
@@ -232,23 +379,11 @@ function resizeCanvas() {
 
 function drawCockpitArtwork(width, height, colors) {
   const isCarbon = settings.theme === "carbon";
-  const isGt = settings.theme === "gt";
-  const centerX = width * 0.78;
-  const centerY = height * 0.52;
-  const baseRadius = Math.min(width, height) * 0.42;
 
   context.save();
   context.lineCap = "round";
-  context.globalAlpha = 0.36;
   context.lineWidth = 1;
-  for (let ring = 0; ring < 4; ring += 1) {
-    context.beginPath();
-    context.arc(centerX, centerY, baseRadius - ring * 23, Math.PI * 0.68, Math.PI * 1.46);
-    context.strokeStyle = ring === 0 ? colors.pulse : colors.line;
-    context.stroke();
-  }
-
-  context.globalAlpha = isCarbon ? 0.2 : 0.3;
+  context.globalAlpha = isCarbon ? 0.12 : 0.18;
   for (let i = 0; i < 12; i += 1) {
     const phase = artTime * 4 + i * 0.46;
     const x = width * (0.05 + i * 0.07);
@@ -260,26 +395,19 @@ function drawCockpitArtwork(width, height, colors) {
     context.stroke();
   }
 
-  context.globalAlpha = 0.2;
-  const glow = context.createRadialGradient(centerX, centerY, baseRadius * 0.14, centerX, centerY, baseRadius * 0.92);
-  glow.addColorStop(0, isGt ? "rgba(255, 61, 42, 0.12)" : "rgba(123, 198, 255, 0.12)");
-  glow.addColorStop(1, "rgba(0, 0, 0, 0)");
-  context.fillStyle = glow;
-  context.beginPath();
-  context.arc(centerX, centerY, baseRadius, 0, Math.PI * 2);
-  context.fill();
   context.restore();
 }
 
 function drawArtwork(timestamp) {
-  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const reduced = reducedMotion.matches;
   const width = canvas.clientWidth;
   const height = canvas.clientHeight;
   const colors = themeColors[settings.theme];
   artTime = reduced ? 0 : timestamp * 0.000035;
   context.clearRect(0, 0, width, height);
 
-  if (["carbon", "gt", "ev"].includes(settings.theme)) {
+  if (cockpitThemes.includes(settings.theme)) {
+    updateClock();
     drawCockpitArtwork(width, height, colors);
     animationFrame = requestAnimationFrame(drawArtwork);
     return;
@@ -386,6 +514,10 @@ const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "LOCAL TIME
 elements.timezone.textContent = timezone.replaceAll("_", " ").replace("/", " / ").toUpperCase();
 
 applySettings();
+buildDialNumbers();
+buildBarrelScale("calendarScale", [1, 5, 10, 15, 20, 25, 31], 1, 31, 31);
+buildBarrelScale("clockScale", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], 0, 12, 60, true);
+buildBarrelScale("temperatureScale", [-20, -10, 0, 10, 20, 30, 40, 50], -20, 50, 36);
 resizeCanvas();
 cancelAnimationFrame(animationFrame);
 animationFrame = requestAnimationFrame(drawArtwork);
